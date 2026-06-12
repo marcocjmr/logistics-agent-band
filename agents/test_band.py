@@ -48,19 +48,9 @@ async def main():
             api_key=api_key
         )
         
-        # Start the agent (checks credentials and connects websocket)
-        print("[INFO] Starting agent...")
-        await agent.start()
-        print("[OK] Band.ai: Agent connected successfully!")
-        
-        # Keep running for 5 seconds to verify connection stability
-        print("[INFO] Waiting 5 seconds to verify connection stability...")
-        await asyncio.sleep(5)
-        
-        # Stop the agent
-        print("[INFO] Stopping agent...")
-        await agent.stop()
-        print("[OK] Band.ai: Agent stopped successfully!")
+        # Run the agent until interrupted (Ctrl+C)
+        print("[OK] Band.ai: Agent running. Press Ctrl+C to stop.")
+        await agent.run()
         
     except Exception as e:
         print(f"[ERROR] Connection failed: {str(e)}")
