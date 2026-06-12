@@ -20,8 +20,9 @@ class TestAdapter(SimpleAdapter):
         room_id
     ):
         print(f"[INFO] Message received in room {room_id}: {msg.content}")
-        # Send a reply back to the room
-        await tools.send_message(f"Echo from TestAgent: {msg.content}")
+        # Send a reply back to the room mentioning the sender
+        sender = msg.sender_name if msg.sender_name else "marcoxc01"
+        await tools.send_message(f"Echo from TestAgent: {msg.content}", mentions=[sender])
 
 async def main():
     print("=== Band.ai Connection Test ===")
