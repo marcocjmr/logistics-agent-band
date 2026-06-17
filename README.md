@@ -4,7 +4,7 @@ This project is a multi-agent corporate travel planning system developed for the
 
 ---
 
-## 🚀 System Architecture & Agent Roles
+## System Architecture & Agent Roles
 
 The system coordinates four autonomous agents to plan and audit corporate travel without human intervention:
 
@@ -23,7 +23,26 @@ The system coordinates four autonomous agents to plan and audit corporate travel
 
 ---
 
-## 🎨 Dual-Panel Frontend Dashboard
+## Swarm Negotiation & Re-planning Flowchart
+
+The following diagram illustrates how the four agents collaborate in a loop until the itinerary satisfies corporate travel policies:
+
+```mermaid
+graph TD
+    UserQuery[User Request] --> Ingestion[Requirements Analyst <br/> Qwen-2.5 via Featherless AI]
+    Ingestion --> StateInit[Initialize JSON State]
+    StateInit --> Transit[Transit Planner <br/> GPT-4o-mini via AI/ML API]
+    Transit --> Lodging[Accommodation Scout <br/> GPT-4o-mini via AI/ML API]
+    Lodging --> Auditor{Financial Auditor <br/> GPT-4o-mini via AI/ML API}
+    Auditor -- "Total Cost <= Budget" --> Approved[Approved & Saved]
+    Auditor -- "Total Cost > Budget" --> Rejected[Rejected: Calculate & Apply Budget Caps]
+    Rejected --> StatePending[Reset State & Feed Back Caps]
+    StatePending --> Transit
+```
+
+---
+
+## Dual-Panel Frontend Dashboard
 
 Built with **Next.js (App Router)** and **Tailwind CSS**, the dashboard is designed to make agent collaboration visible:
 
@@ -32,7 +51,7 @@ Built with **Next.js (App Router)** and **Tailwind CSS**, the dashboard is desig
 
 ---
 
-## 🔄 State Sync & Band Integration
+## State Sync & Band Integration
 
 To bypass API limitations (such as rate limits, outbound message visibility filters, and self-mention errors), the system uses a **Double-Synchronization Layer**:
 1. **Band.ai Integration:** The orchestrator posts real-time progress and structured JSON states directly to the Band room using HTTP POST requests (formatted with standard user-agent headers to bypass Cloudflare protection).
@@ -40,7 +59,7 @@ To bypass API limitations (such as rate limits, outbound message visibility filt
 
 ---
 
-## 🛠️ Installation & Setup
+## Installation & Setup
 
 ### 1. Prerequisites
 * **Python** (v3.9 or higher)
@@ -78,14 +97,14 @@ npm run dev
 
 ---
 
-## 🎯 Verification & Core Loops
+## Verification & Core Loops
 
 The orchestrator supports two core execution loops:
 
 ### Scenario A: High Budget (Immediate Approval)
-* **Query:** "Necesito viajar a Monterrey del 15 al 20 de julio de 2026 para una conferencia de tecnología. Presupuesto $1500 USD."
+* **Query:** "I need to travel from New York to Monterrey from July 15 to July 20, 2026 for a technology conference. Budget $1500 USD."
 * **Consensus:** Flight Selected ($600) + Hotel Selected ($500) = **$1100 USD**. Approved instantly.
 
 ### Scenario B: Budget Constraint (Re-planning Loop)
-* **Query:** "Necesito viajar a Monterrey del 15 al 20 de julio de 2026 para una conferencia de tecnología. Presupuesto $800 USD."
+* **Query:** "I need to travel from New York to Monterrey from July 15 to July 20, 2026 for a technology conference. Budget $800 USD."
 * **Loop:** First proposal ($1200) rejected by Auditor. Swarm re-planned with budget caps, proposing Aeromexico flight ($400) and Hotel Plaza Monterrey ($350) for a total of **$750 USD**, which was approved on the second audit.
