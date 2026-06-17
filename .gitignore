@@ -39,3 +39,19 @@ Thumbs.db
 
 # Local documentation & context
 instructions/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# WSL/Windows Zone Identifier metadata
+*:Zone.Identifier
+
+# Local state files
+shared_history.json
+shared_messages.json
+
+
