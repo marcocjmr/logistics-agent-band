@@ -1,4 +1,4 @@
-```
+``` mermaid
 graph LR
     UserQuery[User Request] --> Ingestion[Requirements Analyst <br/> Qwen-2.5 via Featherless AI]
     Ingestion --> StateInit[Initialize JSON State]
