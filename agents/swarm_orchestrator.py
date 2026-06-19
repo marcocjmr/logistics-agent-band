@@ -341,6 +341,18 @@ class SwarmOrchestrator:
                         save_local_message("Financial Auditor", "Agent", audit_msg)
                         self.post_to_band(audit_msg)
                         history_logs.append(f"[Financial Auditor]: Rejected plan. comments={comments}")
+                        
+                        # Force-reset transit and lodging blocks to guarantee re-planning trigger
+                        if "transit" in state:
+                            state["transit"]["status"] = "pending"
+                            state["transit"]["options"] = []
+                            state["transit"]["selected_option_id"] = None
+                            state["transit"]["total_cost"] = 0.0
+                        if "lodging" in state:
+                            state["lodging"]["status"] = "pending"
+                            state["lodging"]["options"] = []
+                            state["lodging"]["selected_option_id"] = None
+                            state["lodging"]["total_cost"] = 0.0
                 except Exception as e:
                     logger.error(f"[Financial Auditor] Error: {e}")
                     err_msg = f"❌ Financial Auditor Error: {str(e)}"
