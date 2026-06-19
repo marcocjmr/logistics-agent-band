@@ -193,9 +193,7 @@ export default function DashboardPage() {
       .then((res) => res.json())
       .then((data) => {
         setConfig(data);
-        if (data.roomId) {
-          setRoomId(data.roomId);
-        }
+        setRoomId(data.roomId || "local-default-room-id");
       })
       .catch((err) => console.error("Error loading config:", err));
   }, []);
@@ -463,7 +461,7 @@ export default function DashboardPage() {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!roomId) return;
+    const activeRoomId = roomId || "local-default-room-id";
 
     let finalQuery = "";
     if (inputMode === "builder") {

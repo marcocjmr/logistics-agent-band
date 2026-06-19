@@ -71,7 +71,7 @@ function archiveCurrentSession() {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const roomId = searchParams.get("roomId") || BAND_ROOM_ID;
+  const roomId = searchParams.get("roomId") || BAND_ROOM_ID || "local-default-room-id";
 
   if (!roomId) {
     return NextResponse.json({ error: "Missing roomId" }, { status: 400 });
