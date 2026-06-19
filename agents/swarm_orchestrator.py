@@ -322,6 +322,23 @@ class SwarmOrchestrator:
                     logger.info(f"[Financial Auditor] Response: {response_text}")
                     state = extract_json(response_text)
                     
+                    # Deterministic budget check in Python to prevent LLM math hallucinations
+                    transit_cost = float(state.get("transit", {}).get("total_cost", 0.0))
+                    lodging_cost = float(state.get("lodging", {}).get("total_cost", 0.0))
+                    actual_total = transit_cost + lodging_cost
+                    budget = float(state.get("request", {}).get("budget", 0.0))
+                    
+                    if actual_total > budget:
+                        logger.warning(f"Python audit override: Actual cost ${actual_total} exceeds budget ${budget}. Forcing rejection.")
+                        if "audit" not in state or not isinstance(state["audit"], dict):
+                            state["audit"] = {}
+                        state["audit"]["status"] = "rejected"
+                        state["audit"]["total_estimated_cost"] = actual_total
+                        state["audit"]["comments"] = (
+                            f"Total cost of ${actual_total:.1f} exceeds the budget of ${budget:.1f}. "
+                            f"Transit budget capped at ${budget * 0.6:.1f}, Lodging budget capped at ${budget * 0.4:.1f}."
+                        )
+                    
                     save_local_message("Financial Auditor", "Agent", json.dumps(state, indent=2))
                     self.post_to_band(json.dumps(state, indent=2))
                     
